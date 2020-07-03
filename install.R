@@ -1,3 +1,5 @@
 install.packages("dplyr")
 install.packages("ggplot2")
 install.packages("lubridate")
+install.packages("readr")
+install.packages("plotly")
