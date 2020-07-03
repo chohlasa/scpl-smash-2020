@@ -1,2 +1,2 @@
-tidyverse
-plotly
+install.packages("tidyverse")
+install.packages("plotly")
