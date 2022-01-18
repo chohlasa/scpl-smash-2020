@@ -1,0 +1,821 @@
+---
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.2'
+      jupytext_version: 1.13.6
+  kernelspec:
+    display_name: R
+    language: R
+    name: ir
+---
+
+# Double voting and the birthday problem
+
+
+
+## Introduction
+
+
+Claims of voter fraud are widespread. Here's one example:
+
+
+> **“Probably over a million people voted twice 
+in [the 2012 presidential] election.”**
+>
+> Dick Morris, in 2014 on Fox News
+
+
+Voter fraud can take place in a number of ways, including tampering with voting machines, destroying ballots, and impersonating voters. Today, though, we're going to explore 
+**double voting**, which occurs when a single person illegally casts more than one vote in an election.
+
+To start, consider this fact:
+
+> In the 2012 election, there were 141 individuals named "John Smith" who were born in 1970, and 27 of those individuals had exactly the same birthday.
+
+Were there 27 fraudulent "John Smith" ballots in the 2012 election? Let's find out.
+
+
+## The birthday problem
+
+
+
+To begin answering this question, let's solve a similar problem: 
+
+> In a room of 60 people, how likely is it that two people share exactly the same birthday? 
+>
+> You can assume that every person in the room was born in the same year.
+
+
+To answer this question, we could use the following **algorithm**:
+ > 1. We need a room of 60 people, and we need to know their birthdays.
+ > 2. We need to check whether two people in that room share a birthday.
+ > 3. We need to repeat steps 1 and 2 over and over.
+ > 4. We need to figure out how often two or more people shared a birthday.
+
+
+## The `sample` command
+
+
+Here's the first step of our algorithm:
+
+> We need a room of 60 people, and we need to know their birthdays.
+
+To do this in `R`, we could use the `sample` command, which works as follows:
+
+> `sample(numbers to choose from, how many numbers to choose, whether to "put back" numbers)`
+
+```{r}
+# To run code in a cell, you can either press COMMAND + ENTER, 
+# or press the triangular play button at the top of this cell.
+#
+# Note: the colon (`:`) symbol allows us to create lists of consecutive 
+# integers from start:end.
+
+sample(1:10, 5, replace = FALSE)
+```
+
+```{r}
+sample(1:3, 5, replace = TRUE)
+```
+
+```{r}
+sample(1:20, 3, replace = TRUE)
+```
+
+```{r}
+# Why does this fail?
+sample(1:5, 6, replace = FALSE)
+```
+
+```{r}
+# Feel free to test more sample commands here.
+
+
+```
+
+### Exercise
+
+**Using `sample`, simulate a list of 60 birthdays.**
+
+```{r}
+# Your code goes here!
+
+
+```
+
+### Optional Challenge Problem
+
+`seq` is a more powerful way of generating sequences. Use the example code below to learn how `seq` works. Then, use `seq` to make a list of all even numbers between 100 and 110.
+
+```{r}
+seq(0, 50, by=5)
+```
+
+```{r}
+# Your code here!
+
+
+```
+
+## Interlude: Math, variables, and vectors
+
+
+### Using R as a calculator
+
+
+One simple (and useful) way to use R is as a calculator. For example:
+
+```{r}
+5 + 10
+```
+
+```{r}
+30 * 3
+```
+
+```{r}
+25 / 5
+```
+
+```{r}
+3 ^ 2
+```
+
+```{r}
+(2 + 3) * 5
+```
+
+#### Exercise
+
+Use R to find the average of 42, 100, and 280.
+
+```{r}
+# Your code here!
+
+
+```
+
+### Variables
+
+**Variables** are like boxes: they store things for us, and we can label them so we know what's inside.
+
+Consider the following example:
+
+> If x = 2, what is x + 5?
+
+You guessed it: the answer is indeed 7. Let's express the same problem using `R`:
+
+```{r}
+# If x = 2, ...
+x <- 2
+
+# ... what is x + 5?
+x + 5
+```
+
+In the first line of our code, we assigned the value <b>2</b> to the variable named <b>x</b> using <b><-</b> .
+
+
+The assignment operator (`<-`) tells R "Take the variable on the *_left_* of the equal sign, and give it the value of the thing on the *_right_*."
+
+> Note: The equal sign ( `=` ) also works for assignment, but it is an `R` convention to use `<-`.
+
+---
+
+If you ever run a cell containing just a variable, R will print the value of that variable:
+
+```{r}
+x
+```
+
+---
+
+In the second line of our code, we added <b>5</b> to our variable <b>x</b>, which has the value 2.
+
+R will also print the value of simple expressions:
+
+```{r}
+x + 5
+```
+
+**Important note:** The value of x is still 2, not 7. 
+
+Unless we use `<-` to assign a new value to x, it will always be 2:
+
+```{r}
+x
+```
+
+---
+
+We can also use the same variable on both sides of `<-` to update the value of a variable. 
+
+For example, we can increase the value of x by 10:
+
+```{r}
+x <- x + 10
+x
+```
+
+### Vectors
+
+A **vector** is a sequence of things.
+
+For example, we can have a vector of consecutive integers:
+
+```{r}
+5:10
+```
+
+We can also use `c()` to create vectors.
+
+```{r}
+c(10, 100, 1000)
+```
+
+The "c" in `c()` stands for **concatenate**.
+
+---
+
+We can assign vectors to variables too:
+
+```{r}
+my_vector <- c(10, 100, 1000)
+my_vector
+```
+
+---
+
+Lastly, we can extract **elements** from vectors using their **index**, or their place in line.
+
+```{r}
+my_vector[2]
+```
+
+> **Important note:** Unlike many other programming languages, R is 1-indexed, not 0-indexed. So, the first element in a vector is assigned an index of 1, not 0. 
+
+
+#### Exercise
+
+**A. Create a vector of numbers from 15 to 140, and assign the vector to a variable called `my_vector`.**
+
+```{r}
+# Your code here!
+
+
+```
+
+**B. Find the difference between the 30th and 100th values of `my_vector`.**
+
+```{r}
+# Your code here!
+
+
+```
+
+### Optional challenge problem
+
+Find the 57th even number between 1347 and 2124. Hint: use `seq`.
+
+```{r}
+# Your code here!
+
+
+```
+
+## Back to the birthday problem: Finding duplicates
+
+
+The code below defines a new function, `has_duplicate`.
+
+> `has_duplicate` returns `TRUE` if a vector contains any duplicate values, and FALSE otherwise.
+
+```{r}
+has_duplicate <- function(v) {
+    any(duplicated(v))
+}
+```
+
+---
+
+
+```{r}
+vector_a <- sample(1:3, 5, replace = TRUE)
+```
+
+```{r}
+print(vector_a)
+```
+
+```{r}
+has_duplicate(vector_a)
+```
+
+---
+
+
+```{r}
+vector_b <- sample(1:10, 5, replace = FALSE)
+```
+
+```{r}
+print(vector_b)
+```
+
+```{r}
+has_duplicate(vector_b)
+```
+
+---
+
+
+```{r}
+vector_c <- sample(1:5, 10, replace = TRUE)
+```
+
+```{r}
+print(vector_c)
+```
+
+```{r}
+has_duplicate(vector_c)
+```
+
+---
+
+
+Why is there a `[1]` on the left of the printed results? Printing a longer vector makes the purpose of the bracketed number a little more clear:
+
+```{r}
+longer_vector <- 100:200
+print(longer_vector)
+```
+
+The number in the brackets is the place in line (aka "index") of the value immediately to the right of the brackets. For example, `[19]` tells us that `118` is the 19th number in `longer_vector`.
+
+
+---
+
+
+### Exercise
+
+**Generate a vector of 60 random birthdays, and determine whether the vector has any duplicates.**
+
+```{r}
+# Your code here!
+
+
+```
+
+---
+The code below defines another function, `num_duplicates`.
+
+> `num_duplicates` returns the number of "extra" values in a vector.
+>
+> For example, the vector `c(1, 2, 3, 3, 3)` has two "extra" threes, so `num_duplicates` would return `2`.
+
+```{r}
+num_duplicates <- function(v) {
+    sum(duplicated(v))
+}
+```
+
+---
+
+```{r}
+print(vector_a)
+```
+
+```{r}
+num_duplicates(vector_a)
+```
+
+---
+
+
+```{r}
+print(vector_b)
+```
+
+```{r}
+num_duplicates(vector_b)
+```
+
+---
+
+
+```{r}
+print(vector_c)
+```
+
+```{r}
+num_duplicates(vector_c)
+```
+
+---
+
+
+### Exercise
+
+**Think back to the John Smith example:**
+
+> In the 2012 election, there were 141 individuals named "John Smith" who were born in 1970, and 27 of them had exactly the same birthday.
+
+**Generate a vector of 141 random birthdays, and determine how many duplicates are in the vector.** Run your code repeatedly to see how the results can change due to randomness.
+
+```{r}
+# Your code here!
+
+
+```
+
+### Optional Challenge Problem
+
+Generate a vector of 141 birthdays occurring over 10 years (so far, we've been ignoring the year). Calculate the number of duplicate birthdays. 
+
+```{r}
+# Your code here!
+
+
+```
+
+### Repetition with `for` loops
+
+Here's the third step in our algorithm:
+
+> We need to repeat this process over and over.
+
+The `for` loop lets us do exactly this. Here's the syntax for a `for` loop:
+
+> for (`element` in `vector`) { do something }
+
+Here's how a `for` loop works:
+- Iterate over each element of `vector`. 
+- For each element, perform whatever actions are indicated inside `{ }`. 
+
+```{r}
+for (i in 1:10) {
+    print("Hello, world!")
+}
+```
+
+```{r}
+for (i in 1:3) {
+    print(sample(1:20, 5, replace = TRUE))
+}
+```
+
+We can refer to the "current" element using the variable we use before `in`:
+
+```{r}
+for (i in 1:5) {
+    print(i)
+}
+```
+
+> **Important note:** `for` loops are typically not the most efficient way to solve problems in `R`, but they are a handy tool for learning about iteration.
+>
+> Instead, it is best to use a vectorized function, such as `replicate` or `map`. We will see an example later on.
+
+
+## Exercise
+
+**Using a `for` loop, print 10 vectors of 60 random birthdays.**
+
+```{r}
+# Your code here!
+
+
+```
+
+## Exercise
+
+**Using a `for` loop and a counter (see below for example), add up all the numbers from 1 to 100.**
+
+```{r}
+counter <- 0
+
+for (i in 1:5) {
+    counter <- counter + 1
+    print(counter)
+}
+
+print("Final value of counter:")
+print(counter)
+```
+
+```{r}
+# Your code here!
+
+
+```
+
+### Optional challenge problem
+
+Use a `for` loop to print the first odd number, the sum of the first two odd numbers, the sum of the first three odd numbers, ..., all the way up to the sum of the first 10 odd numbers. Hint: `sum` and `seq` will come in handy.
+
+```{r}
+# Your code here!
+
+# Note: sum(1:5) = 1 + 2 + 3 + 4 + 5
+
+
+```
+
+## Interlude: Functions, booleans, and control flow
+
+
+### Functions
+
+If you've taken algebra, you've already seen functions! For example, this function f takes the square root of its input:
+
+> $f(x) = \sqrt{x}$
+>
+> $f(25) = \sqrt{25} = 5$
+
+
+
+
+R also has a square root function called `sqrt`. To use a function in R, we write the name of the function, and then put its input in parentheses. The output of a function is called its **return value**. 
+
+```{r}
+sqrt(25)
+```
+
+You may have noticed that we used this function notation quite a lot already. Here are some of the functions you have already used:
+- `has_duplicate`: determines if a vector has any duplicate values
+- `num_duplicates`: determines how many elements in a vector are duplicates
+- `print`: prints its input 
+
+
+There are *many* other functions in R, and you can even write your own functions! Here are some examples of functions that you can use:
+- `sum`: Adds up all of the numbers in a vector
+- `mean`: Finds the average of the numbers in a vector
+- `length`: Finds the total number of elements in a vector.
+- `max`: Finds the maximum value in a vector
+- `min`: Finds the minimum value in a vector
+
+
+### Exercise 7
+
+**A. Find the sum of all the numbers from 1 to 100 using `sum`.**
+
+```{r}
+# Your code here!
+
+
+```
+
+**B. Find the average of all the numbers from 1 to 100 using `mean`.**
+
+```{r}
+# Your code here!
+
+
+```
+
+### Multi-argument functions
+
+Functions like `print` only need one input, or **argument**. However, functions can have more than one argument. For example, this function `f` adds its two arguments, x and y:
+
+> f(x, y) = x + y
+>
+> f(2, 3) = 2 + 3 = 5
+
+You've also already used a multi-argument function in R: `sample`
+
+`sample` takes three arguments:
+
+1. A vector of numbers to sample from
+2. How many numbers to sample
+3. Whether or not we can reuse numbers after sampling them.
+
+```{r}
+sample(1:10, 5, replace = TRUE)
+```
+
+### Vectorized functions
+
+Often, we'll want to apply the same function to every element in a vector. Rather than use a `for` loop, it is more efficient to use a vectorized function, such as `replicate` or `map`. 
+
+> Vectorization leverages parallel processing, which allows your computer to tackle multiple computations at the same time.
+
+Here's how `replicate` works:
+
+> `replicate(number of times to perform an action, the action)`
+
+
+### Exercise 8
+
+**Use `replicate` to generate 5 vectors of 10 random birthdays.**
+
+```{r}
+# Your code here!
+
+
+```
+
+### Optional challenge problem
+
+
+`map` is a function from the `purrr` package that is more powerful than `replicate`. You can read more about `map` [at this link](https://purrr.tidyverse.org/reference/map.html).
+
+> `purrr` is part of the `tidyverse`, a set of popular `R` packages used for data analysis. We will learn more about the `tidyverse` in a later tutorial. 
+
+Use `purrr::map` to generate 5 vectors of 10 random birthdays.
+
+```{r}
+# Your code here!
+
+
+```
+
+### Control flow with booleans, `if`, and `else`
+
+
+Booleans are a special type of variable that can take on only two possible values: `TRUE` or `FALSE`.
+
+> *Historical note*: Booleans are named after George Boole, a 19th century mathematician. https://en.wikipedia.org/wiki/George_Boole
+
+Booleans come in handy when you're comparing values.
+
+```{r}
+10 == 10
+```
+
+```{r}
+9 == 10
+```
+
+---
+
+The double equal sign ( `==` ) is different than the single equal sign ( `=` ).
+
+> While a single equal sign is used to <i>assign</i> values to arguments inside functions, a double equal sign is used to <i>compare</i> values.
+
+---
+
+
+We can also use greater than ( `>` ) and less than ( `<` ) to compare values:
+
+```{r}
+9 < 10
+```
+
+```{r}
+10 > 10
+```
+
+```{r}
+# <= means "less than or equal to", and >= means "greater than or equal to"
+
+10 >= 10
+```
+
+---
+
+We can use `if` in conjunction with booleans to control our code:
+
+> if (this statement is true) {do this thing}
+
+```{r}
+counter <- 0
+
+for (i in 1:5) {
+    counter <- counter + 1
+    
+    print(counter)
+    
+    if (counter >= 3) {
+        print("Counter is now bigger than or equal to 3!")
+    }
+}
+```
+
+---
+
+In computer science, `else` means "otherwise". We can use `if` and `else` with each other to write code that follows this pattern:
+
+> if (this statement is true) {
+>
+>> do this thing
+>
+> }
+>
+> else {
+>
+>> do this other thing
+>
+> }
+
+```{r}
+counter <- 0
+
+for (i in 1:5) {
+    counter <- counter + 1
+    
+    print(counter)
+    
+    if (counter >= 3) {
+        print("Counter is now bigger than or equal to 3!")
+    }
+    else {
+        print("Counter is less than 3!")
+    }
+}
+```
+
+### Exercise 9
+
+**Write a `for` loop to count off all the numbers from 1 to 10. Print "Bigger than 5!" after each number that is bigger than 5.**
+
+```{r}
+# Your code here!
+
+
+```
+
+### Exercise 10
+
+**Generate a vector of 60 birthdays, and print the birthdays that fall in the first half of the year.**
+
+```{r}
+# Your code here!
+
+
+```
+
+## Back to the birthday problem: Translating our algorithm into code
+
+
+We're ready to come back to our algorithm:
+
+> 1. We need a room of 60 people, and we need to know their birthdays.
+> 2. We need to check whether two people in that room share a birthday.
+> 3. We need to repeat this process over and over.
+> 4. We need to figure out how frequently two or more people shared a birthday.
+
+
+### Exercise 11
+
+**Translate our algorithm into code to solve the birthday problem!**
+
+```{r}
+# Your code here!
+
+
+```
+
+### Exercise 12
+
+**A. Increase the number of birthdays we generate in each vector, and re-run the code several times. What happens to the fraction of vectors with duplicates?**
+
+---
+
+
+**B. Decrease the number of birthday vectors to 100, and re-run the code several times. What happens to the results?**
+
+---
+
+
+**C. Increase the number of birthday vectors to 100,000, and re-run the code several times. What happens to the results?**
+
+---
+
+
+**D. How many birthdays should be in each vector for an approximately 50% chance of a match?**
+
+---
+
+
+## Circling back to double voting
+
+Remember our original problem:
+
+> In the 2012 election, there were 141 individuals named "John Smith" who were born in 1970, and 27 pairs had exactly the same birthday.
+
+## Exercise 13
+
+**Modify the simulation code to calculate the average number of birthday duplicates in 1,000 vectors of 141 individuals.**
+
+```{r}
+# Your code here!
+
+
+```
+
+### Optional challenge problem
+
+The code your wrote above probably returned a value that is smaller than 27, which is how many duplicate birthdays there were for our original list of 141 birthdays. Why?
+
+Hint: think about the value that the `num_duplicates` function returns. 
+
+
+```{r}
+# Use this space to play around with num_duplicates
+
+
+```
