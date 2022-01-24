@@ -55,6 +55,7 @@ We can take a peek simply by typing `stops` into an R chunk:
 
 ```{r}
 head(stops)
+View(stops)
 ```
 
 ### Functions
@@ -73,21 +74,22 @@ To find the number of columns, we (unsurprisingly) use `ncol()`. Try it!
 
 ```{r}
 # Find the number of columns in `stops`
-
+ncol(stops)
 ```
 
 To figure out what the names of our columns are, we can use `colnames()`.
 
 ```{r}
 # Find the column names in `stops`
-
+colnames(stops)
 ```
 
 **Pro-tip:** If you're ever confused about a function and want to know more about it, what it does, how to use it, etc., every function has "documentation" to help! To know more about the `head()` function, simply run a code chunk with `?head`. It provides way more information than you might want or need -- but if you scroll down to the "Examples" section, those usually help!
 
 ```{r}
 # Uncomment and run the code below. Note: the output is long!
-# ?head
+?head
+head
 ```
 
 ## Exercise 1: Stop dates
@@ -98,11 +100,14 @@ To figure out what the names of our columns are, we can use `colnames()`.
 
   1.  **Check `length(stops$date)` (or, equivalently, `length(pull(stops, date))`). Since this vector is too long to print, try instead _sampling_ a few dates from it using `sample()`, just like we did earlier today!**
 
+length(stops$date)
+sample(stops$date)
+
   2.  **What date range does our dataset cover? (Hint: Try exploring the `min()` and `max()` functions, or the `range()` function!)**
 
 ```{r}
 ## EXERCISE 1: YOUR CODE HERE
-
+length(stops$date)
 ```
 
 ### New syntax 
@@ -159,8 +164,8 @@ In the space below:
 2. use the assignment operator `<-` (it's like = in `R`) to create a new variable, `stops_w_yr`.
 
 ```{r}
-# Add a yr column to `stops`
-
+mutate(stops, yr = year(date))
+stops_w_year <- stops 
 ```
 
 **Recall:** When we write code chunks and _don't_ save our result using `<-`, that result does not overwrite or in any way change the data. To change the data, we need to use the process above, creating a new variable, or we could overwrite the original dataframe (`stops <- stops %>% ...` -- but be careful, because you could accidentally overwrite the dataframe with something you didn't expect!)
@@ -178,7 +183,7 @@ Play around with these! Make sure to try the last one.
 ```{r}
 # Investigate your new `yr` column. 
 # Make sure to try counting the number of stops per year!
-
+head(stops_w_year)
 ```
 
 Looks like stops over the years are going down slightly. But there are two weird abberations: 2014 and 2016 seem _too_ low. We'll dive into this more in a bit!
@@ -208,15 +213,17 @@ Create a new variable, `stops_2015` that is our stops dataframe filtered to just
 
 ```{r}
 # Use the filter function to get just stops from 2015
+stops_2015 <- stops_w_yr
+filter(yr == 2015)
+head(stops_2015)
+stops_2015
+#Just to be extra sure, let's check our date range in this new dataframe, `stops_2015'!
 
-```
+{r}
+#What date range does stops_2015 cover?
+range(stops_2015)
 
-Just to be extra sure, let's check our date range in this new dataframe, `stops_2015`!
 
-```{r}
-# What date range does stops_2015 cover?
-
-```
 
 ### Another one!
 
