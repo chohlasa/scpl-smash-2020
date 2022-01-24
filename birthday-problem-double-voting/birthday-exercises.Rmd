@@ -92,6 +92,7 @@ sample(1:5, 6, replace = FALSE)
 
 ```{r}
 # Feel free to test more sample commands here.
+sample(1:5, 6, replace = TRUE)
 
 
 ```
@@ -101,7 +102,7 @@ sample(1:5, 6, replace = FALSE)
 **Using `sample`, simulate a list of 60 birthdays.**
 
 ```{r}
-# Your code goes here!
+sample(1:365, 60, replace = TRUE)
 
 
 ```
@@ -116,7 +117,7 @@ seq(0, 50, by=5)
 
 ```{r}
 # Your code here!
-
+seq(100,110, by=2)
 
 ```
 
@@ -154,6 +155,8 @@ Use R to find the average of 42, 100, and 280.
 
 ```{r}
 # Your code here!
+x <- c(42,100,280)
+mean(x)
 
 
 ```
@@ -188,7 +191,7 @@ The assignment operator (`<-`) tells R "Take the variable on the *_left_* of the
 If you ever run a cell containing just a variable, R will print the value of that variable:
 
 ```{r}
-x
+x <- 2
 ```
 
 ---
@@ -201,12 +204,13 @@ R will also print the value of simple expressions:
 x + 5
 ```
 
+
 **Important note:** The value of x is still 2, not 7. 
 
 Unless we use `<-` to assign a new value to x, it will always be 2:
 
 ```{r}
-x
+x <- 7
 ```
 
 ---
@@ -264,7 +268,8 @@ my_vector[2]
 
 ```{r}
 # Your code here!
-
+my_vector <- 15:140
+my_vector
 
 ```
 
@@ -273,6 +278,7 @@ my_vector[2]
 ```{r}
 # Your code here!
 
+my_vector[100]-my_vector[30]
 
 ```
 
@@ -282,7 +288,8 @@ Find the 57th even number between 1347 and 2124. Hint: use `seq`.
 
 ```{r}
 # Your code here!
-
+vector <- seq(1347,2124,2)
+vector[57]
 
 ```
 
@@ -303,7 +310,7 @@ has_duplicate <- function(v) {
 
 
 ```{r}
-vector_a <- sample(1:3, 5, replace = TRUE)
+vector_a <- sample(1:3, 5, replace = T)
 ```
 
 ```{r}
@@ -318,7 +325,7 @@ has_duplicate(vector_a)
 
 
 ```{r}
-vector_b <- sample(1:10, 5, replace = FALSE)
+vector_b <- sample(1:10, 5, replace = F)
 ```
 
 ```{r}
@@ -365,9 +372,9 @@ The number in the brackets is the place in line (aka "index") of the value immed
 **Generate a vector of 60 random birthdays, and determine whether the vector has any duplicates.**
 
 ```{r}
-# Your code here!
-
-
+bdays <- sample(1:365, 60, replace = TRUE)
+has_duplicate(bdays)
+print(bdays)
 ```
 
 ---
@@ -427,18 +434,18 @@ num_duplicates(vector_c)
 **Generate a vector of 141 random birthdays, and determine how many duplicates are in the vector.** Run your code repeatedly to see how the results can change due to randomness.
 
 ```{r}
-# Your code here!
-
+bdays2 <- sample(1:365,141,replace=T)
+num_duplicates(bdays2)
 
 ```
 
 ### Optional Challenge Problem
 
 Generate a vector of 141 birthdays occurring over 10 years (so far, we've been ignoring the year). Calculate the number of duplicate birthdays. 
-
 ```{r}
 # Your code here!
-
+bdays3 <- sample(1:3650, 141,replace = TRUE)
+num_duplicates(bdays3)
 
 ```
 
@@ -487,8 +494,11 @@ for (i in 1:5) {
 
 ```{r}
 # Your code here!
+bdays <- sample(1:365, 60)
 
-
+for(i in 1:10){
+  print(bdays)
+}
 ```
 
 ## Exercise
@@ -509,8 +519,14 @@ print(counter)
 
 ```{r}
 # Your code here!
+counter <- 0 
+for(i in 1:100) {
+  counter <- counter + 1
+  print(counter)
+}
 
-
+print("final value of counter:") 
+print(counter)
 ```
 
 ### Optional challenge problem
@@ -521,7 +537,10 @@ Use a `for` loop to print the first odd number, the sum of the first two odd num
 # Your code here!
 
 # Note: sum(1:5) = 1 + 2 + 3 + 4 + 5
-
+for(i in 1:10){
+  odds <-sum(seq(1,20,i))
+}
+print(odds)
 
 ```
 
@@ -565,7 +584,7 @@ There are *many* other functions in R, and you can even write your own functions
 
 ```{r}
 # Your code here!
-
+sum(1:100)
 
 ```
 
@@ -573,7 +592,7 @@ There are *many* other functions in R, and you can even write your own functions
 
 ```{r}
 # Your code here!
-
+mean(1:100)
 
 ```
 
@@ -614,12 +633,11 @@ Here's how `replicate` works:
 
 ```{r}
 # Your code here!
-
+replicate(5,sample(1:365,10,replace = T))
 
 ```
 
 ### Optional challenge problem
-
 
 `map` is a function from the `purrr` package that is more powerful than `replicate`. You can read more about `map` [at this link](https://purrr.tidyverse.org/reference/map.html).
 
